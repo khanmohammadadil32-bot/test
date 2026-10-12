@@ -104,7 +104,7 @@ margin-right: 0.4em;
 font-variant-numeric: tabular-nums;
 }
 p::after {
-content: counter(para) "/" counter(total) " \00B7 " counter(left) " left";
+content: counter(para) "/" counter(total) " \00B7  " counter(left) " left";
 display: none;
 position: absolute;
 right: 0;
