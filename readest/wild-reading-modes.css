@@ -1,0 +1,84 @@
+/* Readest — wild reading modes
+ * Each block is self-contained. Paste ONE (or a few) under the
+ * paragraph-numbering CSS. All are pure CSS, no scripts.
+ */
+
+/* A. Spotlight — everything except the tapped paragraph fades out */
+body:has(p:hover) p:not(:hover) {
+	opacity: 0.3;
+	transition: opacity 0.25s;
+}
+
+/* B. Skim mode — each paragraph collapses to its first 2 lines;
+ *    tap to open it. Great for re-reading or finding your place.
+p {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+}
+p:hover {
+	-webkit-line-clamp: unset;
+}
+*/
+
+/* C. Stanzas — chunk prose into breathable blocks of 5 paragraphs
+p:nth-of-type(5n) {
+	margin-bottom: 2.5em !important;
+}
+p:nth-of-type(5n)::after {
+	content: "\2042";               (asterism)
+	display: block;
+	position: static;
+	text-align: center;
+	margin-top: 1.2em;
+	opacity: 0.4;
+}
+*/
+
+/* D. Zebra tracking — faint alternating bands keep your eye on the line
+p:nth-of-type(even) {
+	background: color-mix(in srgb, currentColor 4%, transparent);
+}
+*/
+
+/* E. Chapter heat — paragraphs warm up as the chapter nears its end.
+ *    Uses sibling-index()/sibling-count() (Chromium 138+). Ignored elsewhere.
+@supports (width: calc(1px * sibling-index())) {
+	p {
+		background: color-mix(in srgb,
+			#c9a227 calc(12% * sibling-index() / sibling-count()),
+			transparent);
+	}
+}
+*/
+
+/* F. Reading pace marks — a "breathe" line every 25 paragraphs
+ *    (roughly a Pomodoro of reading for many novels)
+p:nth-of-type(25n) {
+	border-bottom: 1px dashed color-mix(in srgb, currentColor 30%, transparent);
+	padding-bottom: 1em;
+}
+*/
+
+/* G. First-sentence hunter — bold opening line of every paragraph,
+ *    so a page can be scanned by its "topic lines"
+p::first-line {
+	font-weight: 600;
+}
+*/
+
+/* H. Mirror / upside-down drills — novelty reading-speed training
+body { transform: scaleX(-1); }            (mirror)
+body { transform: rotate(180deg); }        (upside down)
+*/
+
+/* I. Cards — every paragraph its own index card
+p {
+	padding: 0.8em 1em !important;
+	margin: 0.8em 0 !important;
+	border-radius: 8px;
+	box-shadow: 0 1px 4px color-mix(in srgb, currentColor 20%, transparent) !important;
+	text-indent: 0 !important;
+}
+*/
