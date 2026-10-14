@@ -1,0 +1,89 @@
+/* ─────────────────────────────────────────────────────────────
+ * READING CURSOR for Readest — a highlight that stays put.
+ *
+ *   • Tap any paragraph      → the paragraph AFTER it lights up.
+ *   • Tap the lit paragraph  → the light moves on to the next one.
+ *   • Lift your finger, tap the margin, turn the page
+ *                            → the light stays where it is.
+ *   • To jump somewhere, tap the paragraph just above where you want
+ *     the light. Tapping a heading lights the paragraph under it.
+ *
+ * How it stays: the "lit" and "dim" states are two number variables.
+ * Switching ON is instant; switching OFF is set to wait ~11 days, so
+ * when your finger leaves, nothing switches off.
+ *
+ * HOW TO USE with your current CSS:
+ *   delete  "A. Spotlight", the whole "p::after { … }" block, and
+ *           sections 3 and 4 (every p:hover rule),
+ *   then paste this file at the end. Your counters stay as they are.
+ *   Needs a recent Readest/WebView (Chrome 111+, iOS/Safari 18+).
+ * ───────────────────────────────────────────────────────────── */
+
+@property --lit { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --dim { syntax: "<number>"; inherits: true; initial-value: 0; }
+
+/* Resting state: going back to it takes ~11 days.
+ * (0.0001, not 0: a fresh "switch off" must aim at a different value
+ * than the slow one already queued, or the browser keeps the slow one.) */
+p {
+	--lit: 0.0001;
+	--dim: 0.0001;
+	transition: --lit 0s 999999s, --dim 0s 999999s, opacity 0.25s;
+
+	/* Everything below follows the two variables */
+	opacity: calc(1 - 0.7 * var(--dim));                       /* the dark spotlight */
+	font-size: calc(1em + 0.3em * var(--lit)) !important;     /* your 1.3em zoom */
+	padding-top: calc(1.6em * var(--lit)) !important;         /* room for the badge */
+	-webkit-text-stroke: calc(0.25px * var(--lit)) currentColor;
+}
+
+/* The lit paragraph = the first <p> after whatever you tapped */
+:is(p, h1, h2, h3, h4, h5, h6):hover ~ p:not(:is(p, h1, h2, h3, h4, h5, h6):hover ~ p ~ p) {
+	--lit: 1;
+	--dim: 0;
+	transition: --lit 0s, --dim 0s, opacity 0.25s;   /* instant, so even a quick tap fully flips it */
+}
+
+/* Every other paragraph dims — but only once something is lit */
+body:has(:is(p, h1, h2, h3, h4, h5, h6):hover ~ p) p:not(:is(p, h1, h2, h3, h4, h5, h6):hover ~ p:not(:is(p, h1, h2, h3, h4, h5, h6):hover ~ p ~ p)) {
+	--lit: 0;
+	--dim: 1;
+	transition: --lit 0s, --dim 0s, opacity 0.25s;   /* instant, so even a quick tap fully flips it */
+}
+
+/* Big number badge — shown only on the lit paragraph */
+p::after {
+	content: counter(para) "/" counter(tens) counter(units);
+	display: block;
+	opacity: var(--lit);
+	position: absolute;
+	left: 0;
+	top: 0.1em;
+	font-size: 1.4em;
+	font-weight: bold;
+	line-height: 1;
+	color: #fff;              /* white suits a dark theme; use #c9a227 for light */
+	text-indent: 0;
+	-webkit-text-stroke: 0;
+	pointer-events: none;
+}
+
+/* Lit paragraph: hide the small number, raise the first letter */
+@container style(--lit: 1) {
+	p::before {
+		display: none;
+	}
+	p::first-letter {
+		font-size: 2em;
+		line-height: 1;
+		font-weight: bold;
+		font-family: Georgia, "Times New Roman", serif;
+	}
+}
+
+/* ── Variant: "tap = light THIS paragraph" instead of the next one.
+ *    Replace the two long selectors above with these:
+ *
+ *      p:hover { --lit: 1; --dim: 0; transition: --lit 0s, --dim 0s, opacity .25s; }
+ *      body:has(p:hover) p:not(:hover) { --lit: 0; --dim: 1; transition: --lit 0s, --dim 0s, opacity .25s; }
+ * ───────────────────────────────────────────────────────────── */
