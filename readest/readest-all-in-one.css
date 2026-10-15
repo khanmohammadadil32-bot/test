@@ -1,7 +1,8 @@
-/* Readest: paragraph numbers + rhythm marks + sticky reading cursor
-   Works on books that use <p> paragraphs AND books (like Penguin ones)
-   that use <div class="tx…"> paragraphs.
-   Tap a paragraph → the NEXT one lights up. Tap the lit one → it moves on. */
+/* Readest: paragraph numbers + rhythm marks + reading cursor
+   Tap a paragraph      → it lights up.
+   Tap the lit one      → the next one lights up.
+   Lift your finger, tap the margin, turn the page → the light stays.
+   Works with <p> paragraphs and with <div class="tx…"> paragraphs. */
 
 /* The "x-readest" lines only satisfy Readest's CSS checker; browsers ignore them. */
 @property --lit {
@@ -16,11 +17,18 @@
 	initial-value: 0;
 	x-readest { z-index: 0; }
 }
+@property --cov {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+	x-readest { z-index: 0; }
+}
 
 body { padding-bottom: 12em !important; }
 
-/* What counts as a paragraph (headings and empty anchor lines don't) */
 :is(p:not(:only-of-type),div[class*=tx]) { counter-increment: para; position: relative; }
+/* the paragraphs' parent gets its own layer stack, so the tap-catcher sits under the text */
+:has(> :is(p:not(:only-of-type),div[class*=tx])) { position: relative; z-index: 0; }
 
 /* Rhythm marks */
 :nth-child(3n of :is(p:not(:only-of-type),div[class*=tx]))  { box-shadow: -6px 0 0 -4px rgba(136,136,136,.5); }
@@ -78,27 +86,41 @@ html { counter-reset: para total; }
 	margin-right: 0.4em;
 }
 
-/* Sticky cursor: switching off waits ~11 days, so the light stays */
+/* Cursor. Switching OFF waits ~11 days, so the light stays where it is. */
 :is(p:not(:only-of-type),div[class*=tx]) {
 	--lit: 0.0001;
 	--dim: 0.0001;
-	transition: --lit 0s 999999s, --dim 0s 999999s, opacity 0.25s;
-	opacity: calc(1 - 0.7 * var(--dim));
+	--cov: 0.0001;
+	pointer-events: visible;
+	transition: --lit 0s 999999s, --dim 0s 999999s, --cov 0s 999999s, pointer-events 0s 999999s allow-discrete;
+	color: color-mix(in srgb, var(--theme-fg-color, currentColor) calc(100% - 70% * var(--dim)), transparent) !important;
 	font-size: calc(1em + 0.3em * var(--lit)) !important;
 	padding-top: calc(1.6em * var(--lit)) !important;
 	-webkit-text-stroke: calc(0.25px * var(--lit)) currentColor;
 }
-/* Lit = the first paragraph after whatever you tapped */
-:is(p,div,h1,h2,h3,h4,h5,h6):hover ~ :is(p:not(:only-of-type),div[class*=tx]):not(:is(p,div,h1,h2,h3,h4,h5,h6):hover ~ :is(p:not(:only-of-type),div[class*=tx]) ~ :is(p:not(:only-of-type),div[class*=tx])) {
+/* Tapped paragraph lights up, and lets later taps fall through it */
+:is(p:not(:only-of-type),div[class*=tx]):active {
 	--lit: 1;
 	--dim: 0;
-	transition: --lit 0s, --dim 0s, opacity 0.25s;
+	--cov: 0;
+	pointer-events: none;
+	transition: --lit 0s, --dim 0s, --cov 0s, pointer-events 0s allow-discrete;
 }
-/* Everything else dims once something is lit */
-body:has(:is(p,div,h1,h2,h3,h4,h5,h6):hover ~ :is(p:not(:only-of-type),div[class*=tx])) :is(p:not(:only-of-type),div[class*=tx]):not(:is(p,div,h1,h2,h3,h4,h5,h6):hover ~ :is(p:not(:only-of-type),div[class*=tx]):not(:is(p,div,h1,h2,h3,h4,h5,h6):hover ~ :is(p:not(:only-of-type),div[class*=tx]) ~ :is(p:not(:only-of-type),div[class*=tx]))) {
+/* The paragraph after it holds the tap-catcher (so tapping the lit one = next) */
+:is(p:not(:only-of-type),div[class*=tx]):active ~ :is(p:not(:only-of-type),div[class*=tx]):not(:is(p:not(:only-of-type),div[class*=tx]):active ~ :is(p:not(:only-of-type),div[class*=tx]) ~ :is(p:not(:only-of-type),div[class*=tx])) {
 	--lit: 0;
 	--dim: 1;
-	transition: --lit 0s, --dim 0s, opacity 0.25s;
+	--cov: 1;
+	pointer-events: auto;
+	transition: --lit 0s, --dim 0s, --cov 0s, pointer-events 0s allow-discrete;
+}
+/* Everything else dims */
+body:has(:is(p:not(:only-of-type),div[class*=tx]):active) :is(p:not(:only-of-type),div[class*=tx]):not(:is(p:not(:only-of-type),div[class*=tx]):active, :is(p:not(:only-of-type),div[class*=tx]):active ~ :is(p:not(:only-of-type),div[class*=tx]):not(:is(p:not(:only-of-type),div[class*=tx]):active ~ :is(p:not(:only-of-type),div[class*=tx]) ~ :is(p:not(:only-of-type),div[class*=tx]))) {
+	--lit: 0;
+	--dim: 1;
+	--cov: 0;
+	pointer-events: auto;
+	transition: --lit 0s, --dim 0s, --cov 0s, pointer-events 0s allow-discrete;
 }
 
 /* Big number on the lit paragraph */
@@ -124,5 +146,16 @@ body:has(:is(p,div,h1,h2,h3,h4,h5,h6):hover ~ :is(p:not(:only-of-type),div[class
 		line-height: 1;
 		font-weight: bold;
 		font-family: Georgia, "Times New Roman", serif;
+	}
+}
+/* The tap-catcher: an invisible layer reaching up behind the lit paragraph */
+@container style(--cov: 1) {
+	:is(p:not(:only-of-type),div[class*=tx])::after {
+		top: auto;
+		bottom: 100%;
+		right: 0;
+		height: 300vh;
+		z-index: -1;
+		pointer-events: auto;
 	}
 }
