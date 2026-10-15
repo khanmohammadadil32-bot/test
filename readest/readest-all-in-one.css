@@ -1,8 +1,9 @@
-/* Readest: numbers + rhythm marks + sticky reading cursor
+/* Readest: paragraph numbers + rhythm marks + sticky reading cursor
+   Works on books that use <p> paragraphs AND books (like Penguin ones)
+   that use <div class="tx…"> paragraphs.
    Tap a paragraph → the NEXT one lights up. Tap the lit one → it moves on. */
 
-/* Registers the two cursor variables. The "x-readest" line is a dummy
-   rule only there to satisfy Readest's CSS checker; browsers ignore it. */
+/* The "x-readest" lines only satisfy Readest's CSS checker; browsers ignore them. */
 @property --lit {
 	syntax: "<number>";
 	inherits: true;
@@ -18,59 +19,58 @@
 
 body { padding-bottom: 12em !important; }
 
+/* What counts as a paragraph (headings and empty anchor lines don't) */
+:is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)) { counter-increment: para; position: relative; }
+
 /* Rhythm marks */
-p:nth-of-type(3n)  { box-shadow: -6px 0 0 -4px rgba(136,136,136,.5); }
-p:nth-of-type(5n)  { box-shadow: -7px 0 0 -4px rgba(201,162,39,.6); }
-p:nth-of-type(10n) { box-shadow: -8px 0 0 -4px #c9a227; }
+:nth-child(3n of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))  { box-shadow: -6px 0 0 -4px rgba(136,136,136,.5); }
+:nth-child(5n of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))  { box-shadow: -7px 0 0 -4px rgba(201,162,39,.6); }
+:nth-child(10n of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) { box-shadow: -8px 0 0 -4px #c9a227; }
 
 /* Counters: para = this paragraph, total = paragraphs in chapter */
 html { counter-reset: para total; }
-p { counter-increment: para; position: relative; }
-p:first-of-type { counter-set: total calc(var(--k,0) + var(--h,0) + var(--t,0) + var(--u,0)); }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) { counter-set: total calc(var(--k,0) + var(--h,0) + var(--t,0) + var(--u,0)); }
 
 /* Chapter total, digit by digit (up to 9999) */
-p:first-of-type:nth-last-of-type(10n+1) { --u: 1; }
-p:first-of-type:nth-last-of-type(10n+2) { --u: 2; }
-p:first-of-type:nth-last-of-type(10n+3) { --u: 3; }
-p:first-of-type:nth-last-of-type(10n+4) { --u: 4; }
-p:first-of-type:nth-last-of-type(10n+5) { --u: 5; }
-p:first-of-type:nth-last-of-type(10n+6) { --u: 6; }
-p:first-of-type:nth-last-of-type(10n+7) { --u: 7; }
-p:first-of-type:nth-last-of-type(10n+8) { --u: 8; }
-p:first-of-type:nth-last-of-type(10n+9) { --u: 9; }
-
-p:first-of-type:is(:nth-last-of-type(100n+10),:nth-last-of-type(100n+11),:nth-last-of-type(100n+12),:nth-last-of-type(100n+13),:nth-last-of-type(100n+14),:nth-last-of-type(100n+15),:nth-last-of-type(100n+16),:nth-last-of-type(100n+17),:nth-last-of-type(100n+18),:nth-last-of-type(100n+19)) { --t: 10; }
-p:first-of-type:is(:nth-last-of-type(100n+20),:nth-last-of-type(100n+21),:nth-last-of-type(100n+22),:nth-last-of-type(100n+23),:nth-last-of-type(100n+24),:nth-last-of-type(100n+25),:nth-last-of-type(100n+26),:nth-last-of-type(100n+27),:nth-last-of-type(100n+28),:nth-last-of-type(100n+29)) { --t: 20; }
-p:first-of-type:is(:nth-last-of-type(100n+30),:nth-last-of-type(100n+31),:nth-last-of-type(100n+32),:nth-last-of-type(100n+33),:nth-last-of-type(100n+34),:nth-last-of-type(100n+35),:nth-last-of-type(100n+36),:nth-last-of-type(100n+37),:nth-last-of-type(100n+38),:nth-last-of-type(100n+39)) { --t: 30; }
-p:first-of-type:is(:nth-last-of-type(100n+40),:nth-last-of-type(100n+41),:nth-last-of-type(100n+42),:nth-last-of-type(100n+43),:nth-last-of-type(100n+44),:nth-last-of-type(100n+45),:nth-last-of-type(100n+46),:nth-last-of-type(100n+47),:nth-last-of-type(100n+48),:nth-last-of-type(100n+49)) { --t: 40; }
-p:first-of-type:is(:nth-last-of-type(100n+50),:nth-last-of-type(100n+51),:nth-last-of-type(100n+52),:nth-last-of-type(100n+53),:nth-last-of-type(100n+54),:nth-last-of-type(100n+55),:nth-last-of-type(100n+56),:nth-last-of-type(100n+57),:nth-last-of-type(100n+58),:nth-last-of-type(100n+59)) { --t: 50; }
-p:first-of-type:is(:nth-last-of-type(100n+60),:nth-last-of-type(100n+61),:nth-last-of-type(100n+62),:nth-last-of-type(100n+63),:nth-last-of-type(100n+64),:nth-last-of-type(100n+65),:nth-last-of-type(100n+66),:nth-last-of-type(100n+67),:nth-last-of-type(100n+68),:nth-last-of-type(100n+69)) { --t: 60; }
-p:first-of-type:is(:nth-last-of-type(100n+70),:nth-last-of-type(100n+71),:nth-last-of-type(100n+72),:nth-last-of-type(100n+73),:nth-last-of-type(100n+74),:nth-last-of-type(100n+75),:nth-last-of-type(100n+76),:nth-last-of-type(100n+77),:nth-last-of-type(100n+78),:nth-last-of-type(100n+79)) { --t: 70; }
-p:first-of-type:is(:nth-last-of-type(100n+80),:nth-last-of-type(100n+81),:nth-last-of-type(100n+82),:nth-last-of-type(100n+83),:nth-last-of-type(100n+84),:nth-last-of-type(100n+85),:nth-last-of-type(100n+86),:nth-last-of-type(100n+87),:nth-last-of-type(100n+88),:nth-last-of-type(100n+89)) { --t: 80; }
-p:first-of-type:is(:nth-last-of-type(100n+90),:nth-last-of-type(100n+91),:nth-last-of-type(100n+92),:nth-last-of-type(100n+93),:nth-last-of-type(100n+94),:nth-last-of-type(100n+95),:nth-last-of-type(100n+96),:nth-last-of-type(100n+97),:nth-last-of-type(100n+98),:nth-last-of-type(100n+99)) { --t: 90; }
-
-p:first-of-type:nth-last-of-type(n+100):not(:nth-last-of-type(n+200)) { --h: 100; }
-p:first-of-type:nth-last-of-type(n+200):not(:nth-last-of-type(n+300)) { --h: 200; }
-p:first-of-type:nth-last-of-type(n+300):not(:nth-last-of-type(n+400)) { --h: 300; }
-p:first-of-type:nth-last-of-type(n+400):not(:nth-last-of-type(n+500)) { --h: 400; }
-p:first-of-type:nth-last-of-type(n+500):not(:nth-last-of-type(n+600)) { --h: 500; }
-p:first-of-type:nth-last-of-type(n+600):not(:nth-last-of-type(n+700)) { --h: 600; }
-p:first-of-type:nth-last-of-type(n+700):not(:nth-last-of-type(n+800)) { --h: 700; }
-p:first-of-type:nth-last-of-type(n+800):not(:nth-last-of-type(n+900)) { --h: 800; }
-p:first-of-type:nth-last-of-type(n+900):not(:nth-last-of-type(n+1000)) { --h: 900; }
-
-p:first-of-type:nth-last-of-type(n+1000):not(:nth-last-of-type(n+2000)) { --k: 1000; }
-p:first-of-type:nth-last-of-type(n+2000):not(:nth-last-of-type(n+3000)) { --k: 2000; }
-p:first-of-type:nth-last-of-type(n+3000):not(:nth-last-of-type(n+4000)) { --k: 3000; }
-p:first-of-type:nth-last-of-type(n+4000):not(:nth-last-of-type(n+5000)) { --k: 4000; }
-p:first-of-type:nth-last-of-type(n+5000):not(:nth-last-of-type(n+6000)) { --k: 5000; }
-p:first-of-type:nth-last-of-type(n+6000):not(:nth-last-of-type(n+7000)) { --k: 6000; }
-p:first-of-type:nth-last-of-type(n+7000):not(:nth-last-of-type(n+8000)) { --k: 7000; }
-p:first-of-type:nth-last-of-type(n+8000):not(:nth-last-of-type(n+9000)) { --k: 8000; }
-p:first-of-type:nth-last-of-type(n+9000):not(:nth-last-of-type(n+10000)) { --k: 9000; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(10n+1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) { --u: 1; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(10n+2 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) { --u: 2; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(10n+3 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) { --u: 3; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(10n+4 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) { --u: 4; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(10n+5 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) { --u: 5; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(10n+6 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) { --u: 6; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(10n+7 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) { --u: 7; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(10n+8 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) { --u: 8; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(10n+9 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) { --u: 9; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):is(:nth-last-child(100n+10 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+11 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+12 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+13 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+14 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+15 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+16 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+17 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+18 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+19 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --t: 10; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):is(:nth-last-child(100n+20 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+21 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+22 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+23 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+24 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+25 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+26 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+27 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+28 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+29 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --t: 20; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):is(:nth-last-child(100n+30 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+31 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+32 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+33 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+34 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+35 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+36 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+37 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+38 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+39 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --t: 30; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):is(:nth-last-child(100n+40 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+41 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+42 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+43 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+44 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+45 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+46 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+47 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+48 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+49 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --t: 40; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):is(:nth-last-child(100n+50 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+51 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+52 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+53 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+54 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+55 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+56 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+57 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+58 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+59 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --t: 50; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):is(:nth-last-child(100n+60 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+61 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+62 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+63 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+64 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+65 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+66 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+67 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+68 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+69 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --t: 60; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):is(:nth-last-child(100n+70 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+71 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+72 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+73 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+74 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+75 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+76 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+77 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+78 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+79 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --t: 70; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):is(:nth-last-child(100n+80 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+81 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+82 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+83 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+84 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+85 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+86 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+87 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+88 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+89 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --t: 80; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):is(:nth-last-child(100n+90 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+91 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+92 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+93 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+94 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+95 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+96 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+97 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+98 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))),:nth-last-child(100n+99 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --t: 90; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+100 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+200 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --h: 100; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+200 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+300 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --h: 200; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+300 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+400 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --h: 300; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+400 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+500 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --h: 400; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+500 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+600 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --h: 500; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+600 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+700 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --h: 600; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+700 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+800 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --h: 700; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+800 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+900 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --h: 800; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+900 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+1000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --h: 900; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+1000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+2000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --k: 1000; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+2000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+3000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --k: 2000; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+3000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+4000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --k: 3000; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+4000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+5000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --k: 4000; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+5000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+6000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --k: 5000; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+6000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+7000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --k: 6000; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+7000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+8000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --k: 7000; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+8000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+9000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --k: 8000; }
+:nth-child(1 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):nth-last-child(n+9000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))):not(:nth-last-child(n+10000 of :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) { --k: 9000; }
 
 /* Small number before each paragraph */
-p::before {
+:is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))::before {
 	content: counter(para) "/" counter(total);
 	font-size: 0.6em;
 	color: #888;
@@ -79,7 +79,7 @@ p::before {
 }
 
 /* Sticky cursor: switching off waits ~11 days, so the light stays */
-p {
+:is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)) {
 	--lit: 0.0001;
 	--dim: 0.0001;
 	transition: --lit 0s 999999s, --dim 0s 999999s, opacity 0.25s;
@@ -88,19 +88,21 @@ p {
 	padding-top: calc(1.6em * var(--lit)) !important;
 	-webkit-text-stroke: calc(0.25px * var(--lit)) currentColor;
 }
-:is(p, h1, h2, h3, h4, h5, h6):hover ~ p:not(:is(p, h1, h2, h3, h4, h5, h6):hover ~ p ~ p) {
+/* Lit = the first paragraph after whatever you tapped */
+:is(p, div, h1, h2, h3, h4, h5, h6):hover ~ :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)):not(:is(p, div, h1, h2, h3, h4, h5, h6):hover ~ :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)) ~ :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))) {
 	--lit: 1;
 	--dim: 0;
 	transition: --lit 0s, --dim 0s, opacity 0.25s;
 }
-body:has(:is(p, h1, h2, h3, h4, h5, h6):hover ~ p) p:not(:is(p, h1, h2, h3, h4, h5, h6):hover ~ p:not(:is(p, h1, h2, h3, h4, h5, h6):hover ~ p ~ p)) {
+/* Everything else dims once something is lit */
+body:has(:is(p, div, h1, h2, h3, h4, h5, h6):hover ~ :is(p, div[class*="tx"])) :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)):not(:is(p, div, h1, h2, h3, h4, h5, h6):hover ~ :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)):not(:is(p, div, h1, h2, h3, h4, h5, h6):hover ~ :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)) ~ :is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child)))) {
 	--lit: 0;
 	--dim: 1;
 	transition: --lit 0s, --dim 0s, opacity 0.25s;
 }
 
 /* Big number on the lit paragraph */
-p::after {
+:is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))::after {
 	content: counter(para) "/" counter(total);
 	display: block;
 	opacity: var(--lit);
@@ -116,8 +118,8 @@ p::after {
 	pointer-events: none;
 }
 @container style(--lit: 1) {
-	p::before { display: none; }
-	p::first-letter {
+	:is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))::before { display: none; }
+	:is(p, div[class*="tx"]):not(:only-of-type:has(> a:only-child))::first-letter {
 		font-size: 2em;
 		line-height: 1;
 		font-weight: bold;
