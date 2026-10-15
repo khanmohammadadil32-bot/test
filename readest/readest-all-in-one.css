@@ -1,8 +1,20 @@
 /* Readest: numbers + rhythm marks + sticky reading cursor
    Tap a paragraph → the NEXT one lights up. Tap the lit one → it moves on. */
 
-@property --lit { syntax: "<number>"; inherits: true; initial-value: 0; }
-@property --dim { syntax: "<number>"; inherits: true; initial-value: 0; }
+/* Registers the two cursor variables. The "x-readest" line is a dummy
+   rule only there to satisfy Readest's CSS checker; browsers ignore it. */
+@property --lit {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+	x-readest { z-index: 0; }
+}
+@property --dim {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+	x-readest { z-index: 0; }
+}
 
 body { padding-bottom: 12em !important; }
 

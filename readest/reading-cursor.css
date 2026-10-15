@@ -19,8 +19,10 @@
  *   Needs a recent Readest/WebView (Chrome 111+, iOS/Safari 18+).
  * ───────────────────────────────────────────────────────────── */
 
-@property --lit { syntax: "<number>"; inherits: true; initial-value: 0; }
-@property --dim { syntax: "<number>"; inherits: true; initial-value: 0; }
+/* The "x-readest" lines are dummy rules that only satisfy Readest's CSS
+   checker (it rejects blocks without a selector); browsers ignore them. */
+@property --lit { syntax: "<number>"; inherits: true; initial-value: 0; x-readest { z-index: 0; } }
+@property --dim { syntax: "<number>"; inherits: true; initial-value: 0; x-readest { z-index: 0; } }
 
 /* Resting state: going back to it takes ~11 days.
  * (0.0001, not 0: a fresh "switch off" must aim at a different value
