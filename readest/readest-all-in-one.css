@@ -93,7 +93,7 @@ html { counter-reset: para total; }
 	--cov: 0.0001;
 	pointer-events: visible;
 	transition: --lit 0s 999999s, --dim 0s 999999s, --cov 0s 999999s, pointer-events 0s 999999s allow-discrete;
-	color: color-mix(in srgb, var(--theme-fg-color, currentColor) calc(100% - 70% * var(--dim)), transparent) !important;
+	-webkit-text-fill-color: color-mix(in srgb, currentColor calc(100% - 70% * var(--dim)), transparent);
 	font-size: calc(1em + 0.3em * var(--lit)) !important;
 	padding-top: calc(1.6em * var(--lit)) !important;
 	-webkit-text-stroke: calc(0.25px * var(--lit)) currentColor;
