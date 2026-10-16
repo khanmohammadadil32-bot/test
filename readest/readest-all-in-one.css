@@ -1,0 +1,161 @@
+/* Readest: paragraph numbers + rhythm marks + reading cursor
+   Tap a paragraph      → it lights up.
+   Tap the lit one      → the next one lights up.
+   Lift your finger, tap the margin, turn the page → the light stays.
+   Works with <p> paragraphs and with <div class="tx…"> paragraphs. */
+
+/* The "x-readest" lines only satisfy Readest's CSS checker; browsers ignore them. */
+@property --lit {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+	x-readest { z-index: 0; }
+}
+@property --dim {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+	x-readest { z-index: 0; }
+}
+@property --cov {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+	x-readest { z-index: 0; }
+}
+
+body { padding-bottom: 12em !important; }
+
+:is(p:not(:only-of-type),div[class*=tx]) { counter-increment: para; position: relative; }
+/* the paragraphs' parent gets its own layer stack, so the tap-catcher sits under the text */
+:has(> :is(p:not(:only-of-type),div[class*=tx])) { position: relative; z-index: 0; }
+
+/* Rhythm marks */
+:nth-child(3n of :is(p:not(:only-of-type),div[class*=tx]))  { box-shadow: -6px 0 0 -4px rgba(136,136,136,.5); }
+:nth-child(5n of :is(p:not(:only-of-type),div[class*=tx]))  { box-shadow: -7px 0 0 -4px rgba(201,162,39,.6); }
+:nth-child(10n of :is(p:not(:only-of-type),div[class*=tx])) { box-shadow: -8px 0 0 -4px #c9a227; }
+
+/* Counters: para = this paragraph, total = paragraphs in chapter */
+html { counter-reset: para total; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])) { counter-set: total calc(var(--k,0) + var(--h,0) + var(--t,0) + var(--u,0)); }
+
+/* Chapter total, digit by digit (up to 9999) */
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(10n+1 of :is(p:not(:only-of-type),div[class*=tx])) { --u: 1; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(10n+2 of :is(p:not(:only-of-type),div[class*=tx])) { --u: 2; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(10n+3 of :is(p:not(:only-of-type),div[class*=tx])) { --u: 3; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(10n+4 of :is(p:not(:only-of-type),div[class*=tx])) { --u: 4; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(10n+5 of :is(p:not(:only-of-type),div[class*=tx])) { --u: 5; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(10n+6 of :is(p:not(:only-of-type),div[class*=tx])) { --u: 6; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(10n+7 of :is(p:not(:only-of-type),div[class*=tx])) { --u: 7; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(10n+8 of :is(p:not(:only-of-type),div[class*=tx])) { --u: 8; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(10n+9 of :is(p:not(:only-of-type),div[class*=tx])) { --u: 9; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):is(:nth-last-child(100n+10 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+11 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+12 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+13 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+14 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+15 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+16 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+17 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+18 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+19 of :is(p:not(:only-of-type),div[class*=tx]))) { --t: 10; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):is(:nth-last-child(100n+20 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+21 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+22 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+23 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+24 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+25 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+26 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+27 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+28 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+29 of :is(p:not(:only-of-type),div[class*=tx]))) { --t: 20; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):is(:nth-last-child(100n+30 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+31 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+32 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+33 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+34 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+35 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+36 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+37 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+38 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+39 of :is(p:not(:only-of-type),div[class*=tx]))) { --t: 30; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):is(:nth-last-child(100n+40 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+41 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+42 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+43 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+44 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+45 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+46 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+47 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+48 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+49 of :is(p:not(:only-of-type),div[class*=tx]))) { --t: 40; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):is(:nth-last-child(100n+50 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+51 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+52 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+53 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+54 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+55 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+56 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+57 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+58 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+59 of :is(p:not(:only-of-type),div[class*=tx]))) { --t: 50; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):is(:nth-last-child(100n+60 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+61 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+62 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+63 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+64 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+65 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+66 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+67 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+68 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+69 of :is(p:not(:only-of-type),div[class*=tx]))) { --t: 60; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):is(:nth-last-child(100n+70 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+71 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+72 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+73 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+74 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+75 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+76 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+77 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+78 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+79 of :is(p:not(:only-of-type),div[class*=tx]))) { --t: 70; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):is(:nth-last-child(100n+80 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+81 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+82 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+83 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+84 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+85 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+86 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+87 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+88 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+89 of :is(p:not(:only-of-type),div[class*=tx]))) { --t: 80; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):is(:nth-last-child(100n+90 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+91 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+92 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+93 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+94 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+95 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+96 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+97 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+98 of :is(p:not(:only-of-type),div[class*=tx])),:nth-last-child(100n+99 of :is(p:not(:only-of-type),div[class*=tx]))) { --t: 90; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+100 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+200 of :is(p:not(:only-of-type),div[class*=tx]))) { --h: 100; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+200 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+300 of :is(p:not(:only-of-type),div[class*=tx]))) { --h: 200; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+300 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+400 of :is(p:not(:only-of-type),div[class*=tx]))) { --h: 300; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+400 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+500 of :is(p:not(:only-of-type),div[class*=tx]))) { --h: 400; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+500 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+600 of :is(p:not(:only-of-type),div[class*=tx]))) { --h: 500; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+600 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+700 of :is(p:not(:only-of-type),div[class*=tx]))) { --h: 600; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+700 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+800 of :is(p:not(:only-of-type),div[class*=tx]))) { --h: 700; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+800 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+900 of :is(p:not(:only-of-type),div[class*=tx]))) { --h: 800; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+900 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+1000 of :is(p:not(:only-of-type),div[class*=tx]))) { --h: 900; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+1000 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+2000 of :is(p:not(:only-of-type),div[class*=tx]))) { --k: 1000; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+2000 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+3000 of :is(p:not(:only-of-type),div[class*=tx]))) { --k: 2000; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+3000 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+4000 of :is(p:not(:only-of-type),div[class*=tx]))) { --k: 3000; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+4000 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+5000 of :is(p:not(:only-of-type),div[class*=tx]))) { --k: 4000; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+5000 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+6000 of :is(p:not(:only-of-type),div[class*=tx]))) { --k: 5000; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+6000 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+7000 of :is(p:not(:only-of-type),div[class*=tx]))) { --k: 6000; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+7000 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+8000 of :is(p:not(:only-of-type),div[class*=tx]))) { --k: 7000; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+8000 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+9000 of :is(p:not(:only-of-type),div[class*=tx]))) { --k: 8000; }
+:nth-child(1 of :is(p:not(:only-of-type),div[class*=tx])):nth-last-child(n+9000 of :is(p:not(:only-of-type),div[class*=tx])):not(:nth-last-child(n+10000 of :is(p:not(:only-of-type),div[class*=tx]))) { --k: 9000; }
+
+/* Small number before each paragraph */
+:is(p:not(:only-of-type),div[class*=tx])::before {
+	content: counter(para) "/" counter(total);
+	font-size: 0.6em;
+	color: #888;
+	vertical-align: super;
+	margin-right: 0.4em;
+}
+
+/* Cursor. Switching OFF waits ~11 days, so the light stays where it is. */
+:is(p:not(:only-of-type),div[class*=tx]) {
+	--lit: 0.0001;
+	--dim: 0.0001;
+	--cov: 0.0001;
+	pointer-events: visible;
+	transition: --lit 0s 999999s, --dim 0s 999999s, --cov 0s 999999s, pointer-events 0s 999999s allow-discrete;
+	-webkit-text-fill-color: color-mix(in srgb, currentColor calc(100% - 70% * var(--dim)), transparent);
+	font-size: calc(1em + 0.3em * var(--lit)) !important;
+	padding-top: calc(1.6em * var(--lit)) !important;
+	-webkit-text-stroke: calc(0.25px * var(--lit)) currentColor;
+}
+/* Tapped paragraph lights up, and lets later taps fall through it */
+:is(p:not(:only-of-type),div[class*=tx]):active {
+	--lit: 1;
+	--dim: 0;
+	--cov: 0;
+	pointer-events: none;
+	transition: --lit 0s, --dim 0s, --cov 0s, pointer-events 0s allow-discrete;
+}
+/* The paragraph after it holds the tap-catcher (so tapping the lit one = next) */
+:is(p:not(:only-of-type),div[class*=tx]):active ~ :is(p:not(:only-of-type),div[class*=tx]):not(:is(p:not(:only-of-type),div[class*=tx]):active ~ :is(p:not(:only-of-type),div[class*=tx]) ~ :is(p:not(:only-of-type),div[class*=tx])) {
+	--lit: 0;
+	--dim: 1;
+	--cov: 1;
+	pointer-events: auto;
+	transition: --lit 0s, --dim 0s, --cov 0s, pointer-events 0s allow-discrete;
+}
+/* Everything else dims */
+body:has(:is(p:not(:only-of-type),div[class*=tx]):active) :is(p:not(:only-of-type),div[class*=tx]):not(:is(p:not(:only-of-type),div[class*=tx]):active, :is(p:not(:only-of-type),div[class*=tx]):active ~ :is(p:not(:only-of-type),div[class*=tx]):not(:is(p:not(:only-of-type),div[class*=tx]):active ~ :is(p:not(:only-of-type),div[class*=tx]) ~ :is(p:not(:only-of-type),div[class*=tx]))) {
+	--lit: 0;
+	--dim: 1;
+	--cov: 0;
+	pointer-events: auto;
+	transition: --lit 0s, --dim 0s, --cov 0s, pointer-events 0s allow-discrete;
+}
+
+/* Big number on the lit paragraph */
+:is(p:not(:only-of-type),div[class*=tx])::after {
+	content: counter(para) "/" counter(total);
+	display: block;
+	opacity: var(--lit);
+	position: absolute;
+	left: 0;
+	top: 0.1em;
+	font-size: 1.4em;
+	font-weight: bold;
+	line-height: 1;
+	color: #fff;
+	text-indent: 0;
+	-webkit-text-stroke: 0;
+	pointer-events: none;
+}
+@container style(--lit: 1) {
+	:is(p:not(:only-of-type),div[class*=tx])::before { display: none; }
+	:is(p:not(:only-of-type),div[class*=tx])::first-letter {
+		font-size: 2em;
+		line-height: 1;
+		font-weight: bold;
+		font-family: Georgia, "Times New Roman", serif;
+	}
+}
+/* The tap-catcher: an invisible layer reaching up behind the lit paragraph */
+@container style(--cov: 1) {
+	:is(p:not(:only-of-type),div[class*=tx])::after {
+		top: auto;
+		bottom: 100%;
+		right: 0;
+		height: 300vh;
+		z-index: -1;
+		pointer-events: auto;
+	}
+}
